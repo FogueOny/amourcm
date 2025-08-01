@@ -8,7 +8,9 @@ import Link from 'next/link'
 import { supabase, type LoveMessage } from '../../lib/supabase'
 import EnvelopeAnimation from '../../components/EnvelopeAnimation'
 
-export default function LovePage() {
+import { Suspense } from 'react'
+
+function LoveContent() {
   const searchParams = useSearchParams()
   const id = searchParams.get('id')
   
@@ -112,5 +114,32 @@ export default function LovePage() {
       recipientName={message.recipient_name}
       loveMessage={message.love_message}
     />
+  )
+}
+
+export default function LovePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center"
+        >
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            className="inline-block mb-4"
+          >
+            <Heart className="w-12 h-12 text-pink-500 fill-current" />
+          </motion.div>
+          <p className="text-gray-600 text-lg">
+            Chargement de votre message d'amour...
+          </p>
+        </motion.div>
+      </div>
+    }>
+      <LoveContent />
+    </Suspense>
   )
 }
